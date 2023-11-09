@@ -21,15 +21,15 @@ type metadata struct {
 	Tags      []string `yaml:"tags"`
 }
 
-type post struct {
+type Post struct {
 	Metadata metadata
 	Date     time.Time
 	Content  string
 }
 
-type tag struct {
+type Tag struct {
 	Name  string
-	Posts []post
+	Posts []Post
 }
 
 func logError(err error) {
@@ -38,7 +38,7 @@ func logError(err error) {
 	}
 }
 
-func extractPost(path string) post {
+func extractPost(path string) Post {
 	file, err := os.Open(path)
 	logError(err)
 
@@ -51,7 +51,7 @@ func extractPost(path string) post {
 		logError(err)
 	}
 	html := markdown.ToHTML(content, nil, nil)
-	Post := post{Metadata: matter, Date: date, Content: string(html)}
+	Post := Post{Metadata: matter, Date: date, Content: string(html)}
 
 	return Post
 }
@@ -74,8 +74,8 @@ func getPosts() []string {
 	return paths
 }
 
-func combinePosts(posts []string) []post {
-	var post_list []post
+func combinePosts(posts []string) []Post {
+	var post_list []Post
 	for _, post := range posts {
 		post_content := extractPost(post)
 		if post_content.Metadata.Published != "" {
@@ -85,7 +85,7 @@ func combinePosts(posts []string) []post {
 	return post_list
 }
 
-func sortPostsByDate(posts []post) []post {
+func sortPostsByDate(posts []Post) []Post {
 	sort.Slice(posts, func(i, j int) bool {
 		return posts[i].Date.Before(posts[j].Date)
 	})
@@ -93,7 +93,7 @@ func sortPostsByDate(posts []post) []post {
 	return posts
 }
 
-func buildSite(posts []post) {
+func buildSite(posts []Post) {
 	// Menu
 	err := os.Mkdir("build", os.ModePerm)
 	if !os.IsExist(err) {
@@ -142,7 +142,7 @@ func buildSite(posts []post) {
 	}
 }
 
-func getTagList(posts []post) []tag {
+func getTagList(posts []Post) []Tag {
 	var tag_list []string
 	for _, post := range posts {
 		tags := post.Metadata.Tags
@@ -152,9 +152,9 @@ func getTagList(posts []post) []tag {
 			}
 		}
 	}
-	var tags []tag
+	var tags []Tag
 	for _, tag_list_entry := range tag_list {
-		var tag_entry tag
+		var tag_entry Tag
 		tag_entry.Name = tag_list_entry
 		for _, post := range posts {
 			if slices.Contains(post.Metadata.Tags, tag_list_entry) {
