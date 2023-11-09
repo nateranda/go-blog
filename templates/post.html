@@ -1,0 +1,24 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{.Metadata.Name}}</title>
+
+    <link href="../../static/favicon.ico" rel="icon">
+    <link href="../../static/css/reset.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <link href="../../static/css/markdown.css" rel="stylesheet">
+</head>
+<body>
+    <div class="center">
+        <div class="post">
+            <div class="title">{{.Metadata.Name}}</div>
+            <a class="back" href="../../">back</a>
+            <div class="date">{{.Metadata.Published}}</div>
+            {{range $tag := .Metadata.Tags}}
+            <a class="tag" href="../../tag/{{$tag}}">{{$tag}}</a>
+            {{end}}
+        </div>
+{{.Content}}
+</div>
+</body>
+</html>
