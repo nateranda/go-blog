@@ -32,12 +32,14 @@ type Tag struct {
 	Posts []Post
 }
 
+// logError logs an error as fatal if it exists.
 func logError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
+// extractPost extracts the metadata and content from a given Markdown file.
 func extractPost(path string) Post {
 	file, err := os.Open(path)
 	logError(err)
@@ -51,11 +53,12 @@ func extractPost(path string) Post {
 		logError(err)
 	}
 	html := markdown.ToHTML(content, nil, nil)
-	Post := Post{Metadata: matter, Date: date, Content: string(html)}
+	post := Post{Metadata: matter, Date: date, Content: string(html)}
 
-	return Post
+	return post
 }
 
+// getPosts returns a list of posts from the posts directory.
 func getPosts() []string {
 	f, err := os.Open("posts")
 	logError(err)
@@ -74,6 +77,7 @@ func getPosts() []string {
 	return paths
 }
 
+// combinePosts populates a Post slice with posts' metadata and content.
 func combinePosts(posts []string) []Post {
 	var post_list []Post
 	for _, post := range posts {
@@ -93,6 +97,7 @@ func sortPostsByDate(posts []Post) []Post {
 	return posts
 }
 
+// buildSite creates the site's directories and static HTML files.
 func buildSite(posts []Post) {
 	// Menu
 	err := os.Mkdir("build", os.ModePerm)
@@ -142,6 +147,7 @@ func buildSite(posts []Post) {
 	}
 }
 
+// getTagList populates a Tag slice with tags and their child posts.
 func getTagList(posts []Post) []Tag {
 	var tag_list []string
 	for _, post := range posts {
