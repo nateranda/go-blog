@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -47,6 +48,11 @@ func extractPost(path string) Post {
 	var matter metadata
 	content, err := frontmatter.Parse(file, &matter)
 	logError(err)
+	if matter.Name == "" {
+		log.Fatal(fmt.Errorf("post '%s' has no Name metadata", path))
+	} else if matter.Slug == "" {
+		log.Fatal(fmt.Errorf("post '%s' has no Slug metadata", path))
+	}
 	var date time.Time
 	if matter.Published != "" {
 		date, err = time.Parse("Jan 2, 2006", matter.Published)
