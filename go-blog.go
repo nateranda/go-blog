@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"slices"
 	"sort"
 	"time"
@@ -48,10 +49,15 @@ func extractPost(path string) Post {
 	var matter metadata
 	content, err := frontmatter.Parse(file, &matter)
 	logError(err)
+
+	isValidUrl := regexp.MustCompile(`^[a-zA-Z0-9-_]+$`).MatchString
+
 	if matter.Name == "" {
 		log.Fatal(fmt.Errorf("post '%s' has no Name metadata", path))
 	} else if matter.Slug == "" {
 		log.Fatal(fmt.Errorf("post '%s' has no Slug metadata", path))
+	} else if !isValidUrl(matter.Slug) {
+		log.Fatal(fmt.Errorf("post '%s' has invalid Slug metadata: must only have a-z, A-Z, 0-9, '-', and '_'", path))
 	}
 	var date time.Time
 	if matter.Published != "" {
